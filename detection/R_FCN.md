@@ -9,7 +9,7 @@
 **We argue that the aforementioned unnatural design is caused by a dilemma of increasing translation *invariance* for image classification vs. respecting translation *variance* for object detection.**
 
 The key idea of R-FCN for object detection as this fingure:
-![rfcn1](../figures/r-fcn1.png)
+![rfcn1](../figures/rfcn1.png)
 
 > We hypothesize that deeper convolutional layers in an image classification network are less sensitive to translation. To address this dilemma, the ResNet paper's detection pipeline inserts the Roi pooling layer into convolutions---this *region-specific* operation breaks down translation invariance, and the post-RoI convolutional layers are no longer translation-invariant when evaluated across different regions. However, this design sacrifices training and testing efficiency since it introduces a considerably number of region-wise layers.
 
