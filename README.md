@@ -1,15 +1,13 @@
 ## This repository contains reading notes about machine learning papers
 ### Object Detection
-***
 2017-07-09
 * [R-FCN: Object Detection via Region-based Fully Convolutional Networks](detection/R_FCN.md)
 
 
 ### Generative Adversarial Network
-***
 2017-06
 * [Towards Principled Methods For Training Generative Adversarial Networks](gan/Towards_Principled_Methods_For_Training_Generative_Adversarial_Networks.md)
-* [Wasserstein GAN  **copy from** *[令人拍案叫绝的Wasserstein GAN](https://zhuanlan.zhihu.com/p/25071913?columnSlug=f00cb0979b57ab6d7f70e287b0cba55d)*](gan/Wasserstein_GAN.md)
+* [Wasserstein GAN](gan/Wasserstein_GAN.md) **copy from** *[令人拍案叫绝的Wasserstein GAN](https://zhuanlan.zhihu.com/p/25071913?columnSlug=f00cb0979b57ab6d7f70e287b0cba55d)*
 
 2017-06-13
 * [Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](gan/Unpaired_Image-to-Image_Translation_using_Cycle-Consistent_Adversarial_Networks.md)
@@ -29,6 +27,5 @@
 
 
 ### Variational Autoencoder
-***
 2017-06
 * [Tutorial on Variational Autoencoders](vae/Tutorial_on_Variational_Autoencoders.md)
