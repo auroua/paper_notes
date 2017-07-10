@@ -5,7 +5,7 @@
 
 
 ### Generative Adversarial Network
-2017-06
+2017-06-10
 * [Towards Principled Methods For Training Generative Adversarial Networks](gan/Towards_Principled_Methods_For_Training_Generative_Adversarial_Networks.md)
 * [Wasserstein GAN](gan/Wasserstein_GAN.md) **copy from** *[令人拍案叫绝的Wasserstein GAN](https://zhuanlan.zhihu.com/p/25071913?columnSlug=f00cb0979b57ab6d7f70e287b0cba55d)*
 
@@ -25,7 +25,9 @@
 * [Adversarial Feature Learning](gan/Adversarial_Feature_Learning.md)
 * [FCNs in the Wild: Pixel-level Adversarial and Constraint-based Adaptation](gan/FCNs_in_the_Wild_Pixel-level_Adversarial_and_Constraint-based_Adaptation.md)
 
-
+2017-07-10
+* [Unsupervised domain adaptation in brain lesion segmentation with adversarial networks](gan/Unsupervised_domain_adaptation_in_brain_lesion_segmentation_with_adversarial_networks.md)
+* [InfoGAN: Interpretable Representation Learning by Information Maximizing Generative Adversarial Nets](gan/InfoGAN_Interpretable_epresentation_Learning_by_Information_Maximizing_Generative_Adversarial_Nets.md)
 ### Variational Autoencoder
 2017-06
 * [Tutorial on Variational Autoencoders](vae/Tutorial_on_Variational_Autoencoders.md)
