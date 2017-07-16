@@ -9,7 +9,7 @@
 
 > We provide the generator network with both the incompressible noise z and the latent code c, so the form of the generator becomes $G(z, c)$. **In standard GAN, the generator is free to ignore the additional latent code c by finding a solution satisfying $P_G(x|c)=P_G(x)$.**
 
-> **We propose an information-theoretic regularization: there should be high mutual information between latent codes c and generator distribution $G(z, c). Thus $I(c;G(z,c))$ should be high.**
+> **We propose an information-theoretic regularization: there should be high mutual information between latent codes c and generator distribution $G(z, c)$. Thus $I(c;G(z,c))$ should be high.**
 
 > In information theory, mutual information between X and Y, $I(X, Y)$, **measures the "amount of information" learned from knowledge of random variable Y about the other random variable X.**
 
