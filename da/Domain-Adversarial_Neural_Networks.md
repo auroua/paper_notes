@@ -30,8 +30,6 @@ d_H(S,T) = 2(1 - \min_{\eta \in H}[\frac{1}{m}\sum_{i=1}^{m}I[\eta(x_i^s)=1] +
 \frac{1}{m'}\sum_{i=1}^{m'}I[\eta(x_{i}^{t})=0]])
 $$
 
-The *H-divergence* defined a worst classificier $\eta$.
-
 **Theorem 2** Let H be a hypothesis class of VC dimension d. With probability $1-\delta$ over the choice of samples $S \sim (D_S)^m$ and $T \sim (D_T^x)^m$, for every $\eta \in H$:
 $$
 R_{D_T}(\eta) \le R_S(\eta) + d_H(S,T) + ...

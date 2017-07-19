@@ -44,11 +44,18 @@
 2017-07-10
 * [Unsupervised domain adaptation in brain lesion segmentation with adversarial networks](da/Unsupervised_domain_adaptation_in_brain_lesion_segmentation_with_adversarial_networks.md)
 
-
 2017-07-15
-* [Domain-Adversarial Neural Networks](gan/Domain-Adversarial_Neural_Networks.md)
+* [Domain-Adversarial Neural Networks](da/Domain-Adversarial_Neural_Networks.md)
 * [Multiple Source Domain Adaptation with Adversarial Training of Neural Networks](da/Multiple_Source_Domain_Adaptation_with_Adversarial_Training_of_Neural_Networks.md)
 
+2017-07-16
+* [Analysis of Representations for Domain Adaptation](da/Analysis_of_Representations_for_Domain_Adaptation.md)
+
+2017-07-17
+* [Domain-Adversarial Training of Neural Networks](da/Domain-Adversarial_Training_of_Neural_Networks.md)
+
+2017-07-18
+* [Visual Domain Adaptation](da/visual_domain_adaptation.md)
 ### Variational Autoencoder
 2017-06
 * [Tutorial on Variational Autoencoders](vae/Tutorial_on_Variational_Autoencoders.md)
