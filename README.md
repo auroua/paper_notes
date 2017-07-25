@@ -3,6 +3,8 @@
 2017-07-09
 * [R-FCN: Object Detection via Region-based Fully Convolutional Networks](detection/R_FCN.md)
 
+2017-07-20
+* [Spatial Transformer Networks](detection/Spatial_Transformer_Networks.md)
 
 ### Generative Adversarial Network
 2017-06-10
@@ -59,3 +61,7 @@
 ### Variational Autoencoder
 2017-06
 * [Tutorial on Variational Autoencoders](vae/Tutorial_on_Variational_Autoencoders.md)
+
+### Attention
+2017-07-21
+* [Neural Turing Machines](attention/Neural_Turing_Machines.md)
