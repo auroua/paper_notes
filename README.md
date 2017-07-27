@@ -58,6 +58,9 @@
 
 2017-07-18
 * [Visual Domain Adaptation](da/visual_domain_adaptation.md)
+
+2017-07-27
+* [Crossing Nets: Combining GANs and VAEs with a Shared Latent Space for Hand Pose Estimation](da/Crossing_Nets_Combining_GANs_and_VAEs_with_a_Shared_Latent_Space_for_Hand_Pose_Estimation.md)
 ### Variational Autoencoder
 2017-06
 * [Tutorial on Variational Autoencoders](vae/Tutorial_on_Variational_Autoencoders.md)
