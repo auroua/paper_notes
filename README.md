@@ -33,6 +33,8 @@
 2017-07-13
 * [Conditional Image Synthesis With Auxiliary Classifier GANS](gan/Conditional_Image_Synthesis_With_Auxiliary_Classifier_GANS.md)
 
+2017-07-27
+* [Learning from Simulated and Unsupervised Images through Adversarial Training](gan/Learning_from_Simulated_and_Unsupervised_Images_through_Adversarial_Training.md)
 ### Domain Adaptation
 2017-06-15
 * [Unsupervised Pixel-Level Domain Adaptation with Generative Adversarial Networks](da/Unsupervised_Pixel-Level_Domain_Adaptation_with_Generative_Adversarial_Networks.md)
