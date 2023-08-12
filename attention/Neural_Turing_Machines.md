@@ -1,9 +1,13 @@
 ## 2017-7-9
+
 ### Neural Turing Machines
+
 ###### published: 2014-12
+
 ###### author: DeepMind
 
 **Neural Turing Machine**
+
 > A Neural Turning Machine architecture contains two basic components: a neural network *controller* and a *memory bank*, as shown in following figure:
 
 ![ntm1](../figures/ntm1.png)
