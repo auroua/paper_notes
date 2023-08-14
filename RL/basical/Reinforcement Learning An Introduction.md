@@ -119,7 +119,7 @@ $$
 
 > The update $s\rightarrow u$ means that the estimated value for state s should be more like the update target u.
 
-> Up to now, the actual update has been trivial: the table entry for s’s estimated value has simply been shifted a fraction of the way toward u, and the estimated values of all other states were left unchanged.
+> Up to now, the actual update has been trivial: the table entry for $S$’s estimated value has simply been shifted a fraction of the way toward $U$, and the estimated values of all other states were left unchanged.
 
 > Moreover, the learned values at each state were decoupled—an update at one state affected no other. But with genuine approximation, an update at one state affects many others, and **it is not possible to get the values of all states exactly correct.**
 
@@ -347,3 +347,130 @@ w_t = w_t + \alpha \delta z_t
 $$
 
 ## Chapter 13 Policy Gradient Methods
+
+The target of policy gradient methods and the on-policy value approximation methods are listed below.
+
+$$
+L(w) = E_{s, a}[Q_\pi(s, a) - \hat Q(s, a; w)]^2
+$$
+
+$$
+J(\theta) = E_{s_0 \in \mu(s_0)}[V_\pi(s_0)]
+$$
+
+$$
+\theta_{t+1} = \theta_t + \alpha \nabla_\theta J(\theta)
+$$
+
+> Methods that learn approximations to both policy and value functions are often called actor–critic methods, where ‘actor’ is a reference to the learned policy, and ‘critic’ refers to the learned value function, usually a state-value function.
+
+### Policy Gradient Theorem
+
+$$
+\nabla_\theta v_\pi(s) = \sum_{x \in S}\sum_{k=0}^\infty Pr(s \rightarrow x, k, \pi) \sum_a \nabla_\theta \pi_\theta(a|x) q_\pi(x, a)
+$$
+
+$$
+\nabla J(\theta) = \nabla v_\pi(S_0) \varpropto  \sum_s \mu(s) \sum_a \nabla \pi(a|s) Q_\pi(s, a)
+$$
+
+$$
+\mu(s) = \frac{\eta(s)}{\sum_{s'}\eta(s')}
+$$
+
+$$
+\eta(s) = \sum_{k=0}^\infty Pr(s_0 \rightarrow s, k, \pi)
+$$
+
+> $Pr(s_0 \rightarrow s, k, \pi)$ is the probability of transitioning from state s to state x in k steps under policy.
+
+$$
+\nabla J(\theta) \varpropto  \sum_s \mu(s) \sum_a \nabla \pi(a|s) Q_\pi(s, a)
+$$
+
+### REINFORCE: Monte Carlo Policy Gradient
+
+$$
+\nabla J(\theta) \varpropto  \sum_s \mu(s) \sum_a \nabla \pi(a|s) Q_\pi(s, a) \\
+$$
+
+$$
+\nabla J(\theta) = E_{\mu(s)}[\sum_a Q_\pi(S_t, a)\nabla \pi(a|S_t; \theta)]
+$$
+
+$$
+\theta_{t+1} = \theta_t + \alpha \sum_a \hat q(S_t, a; w) \nabla \pi(a|S_t; \theta)
+$$
+
+> This algorithm, which has been called an **all-actions method** because its update involves all of the actions, is promising and deserving of further study, but our current interest is the classical **REINFORCE algorithm** (Willams, 1992) whose update at time $t$ involves just $A_t$, the one action actually taken at time $t$.
+
+$$
+\begin{array}{ll}
+\nabla J(\theta) &= E_{s \in \mu(s)}\lbrack\sum_a \pi(a|S_t; \theta) Q_\pi(S_t, a) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}\rbrack \\
+&=E_{s \in \mu(s), a \in \pi(a|s)}[Q_\pi(S_t, A_t) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}] \\
+&= E_{s \in \mu(s), a \in \pi(a|s)}[G_t \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}]
+\end{array}
+$$
+
+**REINFORCE update**
+
+$$
+\theta_{t+1} = \theta_t + \alpha G_t \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}
+$$
+
+> The vector is the direction in parameter space that most increases the probability of repeating the action $A_t$ on future visits to state $S_t$. The update increases the parameter vector in this direction proportional to the return, and inversely proportional to the action probability. The former makes sense because it causes the parameter to move most in the directions that favor actions that yield the highest return. The latter makes sense because otherwise actions that are selected frequently are at an advantage (the updates will be more often in their direction) and might win out even if they do not yield the highest return.
+
+![REINFORCE MC Update](../../figures/RL/rl_chp13n_fig1.png)
+
+### REINFORCE with Baseline
+
+$$
+\nabla J(\theta) \varpropto  \sum_s \mu(s) \sum_a (Q_\pi(s, a)-b(s)) \nabla \pi(a|s; \theta)
+$$
+
+$$
+\sum_a b(s) \nabla \pi(a|s; \theta) = b(s) \sum_a \nabla \pi(a|s; \theta) = b(s) \nabla 1 = 0
+$$
+
+$$
+\theta_{t+1} = \theta_t + \alpha(G_t - b(S_t)) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}
+$$
+
+> In general, the baseline leaves the expected value of the update unchanged, but it can have a large e↵ect on its variance.
+
+> In some states all actions have high values and we need a high baseline to di↵erentiate the higher valued actions from the less highly valued ones; in other states all actions will have low values and a low baseline is appropriate.
+
+![REINFORCE with Baseline](../../figures/RL/rl_chp13n_fig2.png)
+
+### Actor-Critic Methods
+
+> Although the REINFORCE-with-baseline method learns both a policy and a state-value function, we do not consider it to be an actor–critic method because its state-value function is used only as a baseline, not as a critic. That is, it is not used for bootstrapping (updating the value estimate for a state from the estimated values of subsequent states), but only as a baseline for the state whose estimate is being updated.
+
+
+$$
+\begin{array}{ll}
+\theta_{t+1} &= \theta_t + \alpha (G_{t:t+1} - \hat v(S_t; w)) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)} \\
+&= \theta_t + \alpha (R_{t+1} + \gamma V_\pi(S_{t+1}; w) - \hat V_\pi(S_t; w)) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)} \\
+&= \theta_t + \alpha \delta_t \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)} \\
+\end{array}
+$$
+
+![Acotr-Critic Episodic](../../figures/RL/rl_chp13n_fig3.png)
+
+![Acotr-Critic with Eligibility Traces Episodic](../../figures/RL/rl_chp13n_fig4.png)
+
+### Policy Gradient for Continuing Problems
+
+![Acotr-Critic with Eligibility Traces Continuing](../../figures/RL/rl_chp13n_fig5.png)
+
+### Policy Parameterization for Continuous Actions
+
+$$
+p(x) = \frac{1}{\sigma \sqrt{2\pi}} \exp(-\frac{(x-\mu)^2}{2\sigma^2})
+$$
+
+![Gaussian Distribution](../../figures/RL/rl_chp13n_fig6.png)
+
+$$
+\pi(a|s; \theta) = \frac{1}{\sigma(s; \theta) \sqrt{2\pi}} \exp(-\frac{(x-\mu(s;\theta))^2}{2\sigma(s;\theta)^2})
+$$
