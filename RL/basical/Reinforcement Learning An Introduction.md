@@ -6,6 +6,84 @@
 
 ## Chapter 6 Temporal-Difference Learning
 
+> TD learning is a combination of Monte Carlo ideas and dynamic programming (DP) ideas. Like Monte Carlo methods, TD methods can learn directly from raw experience without a model of the environment’s dynamics. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome (they bootstrap).
+
+> Monte Carlo methods wait until the return following the visit is known, then use that return as a target for $V(S_t)$.
+
+$$
+V(S_t) \leftarrow V(S_t) + \alpha [G_t - V(S_t)]
+$$
+> where $G_t$ is the actual return following time $t$, and $\alpha$ is a constant step-size parameter. This method is called *constant-$\alpha$ MC*.
+
+> TD methods need to wait only until the next time step. At time $t+1$ they immediately form a target and make a useful update using the observed reward $R_{t+1}$ and the estimate $V(S_{t+1})$.
+
+$$
+V(S_{t}) \leftarrow V(S_t) + \alpha [R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]
+$$
+
+![Tabular TD(0)](../../figures/RL/rl_chp6_fig1.png)
+
+> The target for the Monte Carlo update is $G_t$, whereas the target for the TD update is $R_{t+1} + \gamma V(S_{t+1})$. This TD method is called TD(0), or one-step TD, because it is a special case of the TD($\lambda$) and n-step TD methods developed in Chapter 12 and Chapter 7.
+
+$$
+\begin{array}{lll}
+v_\pi(s) &= E_\pi[G_t|S_t=s]   \cdots \cdots \cdots \cdots \cdots \cdots \cdots \cdots  (6.3)\\
+ &= E_\pi[R_{t+1} + \gamma G_{t+1} | S_t=s] \\ 
+ &= E_\pi[R_{t+1} + \gamma v_\pi(S_{t+1}) | S_t=s] \cdots \cdots \cdots   (6.4)
+\end{array}
+$$
+
+> Roughly speaking, Monte Carlo methods use an estimate of (6.3) as a target, whereas DP methods use an estimate of (6.4) as a target. The Monte Carlo target is an estimate because the expected value in (6.3) is not known; a sample return is used in place of the real expected return. The DP target is an estimate not because of the expected values, which are assumed to be completely provided by a model of the environment, but because $V_\pi(S_{t+1})$ is not known and the current estimate, $V_\pi(S_{t+1})$, is used instead. The TD target is an estimate for both reasons: it samples the expected values in (6.4) and it uses the current estimate $V$ instead of the true $v_\pi$. Thus, TD methods combine the sampling of Monte Carlo with the bootstrapping of DP.
+
+> *Sample updates* differ from the *expected updates* of DP methods in that they are based on a single sample successor rather than on a complete distribution of all possible successors.
+
+> TD methods have an advantage over DP methods in that they do not require a model of the environment, of its reward and next-state probability distributions.
+
+> With Monte Carlo methods one must wait until the end of an episode, because only then is the return known, whereas with TD methods one need wait only one time step.
+
+> The other reasonable answer is simply to observe that we have seen $A$ once and the return that followed it was 0; we therefore estimate $V(A)$ as 0. This is the answer that batch Monte Carlo methods give. Notice that it is also the answer that gives minimum squared error on the training data. We expect that the first answer will produce lower error on future data, even though the Monte Carlo answer is better on the existing data.
+
+> Batch Monte Carlo methods always find the estimates that minimize mean-squared error on the training set, whereas batch TD(0) always finds the estimates that would be exactly correct for the maximum-likelihood model of the Markov process.
+
+### SARSA: On-policy TD Control
+
+$$
+Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha (R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t))
+$$
+
+![SARSA](../../figures/RL/rl_chp6_fig2.png)
+
+
+> This rule uses every element of the quintuple of events, ($S_t$,$A_t$,$R_{t+1}$,$S_{t+1}$,$A_{t+1}$), that make up a transition from one state–action pair to the next.
+
+### Q-Learning: Off-policy TD Control
+
+$$
+Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha (R_{t+1} + \max_a Q(S_{t+1}, a) - Q(S_t, A_t))
+$$
+
+![Q-learning](../../figures/RL/rl_chp6_fig3.png)
+
+### Expected Sarsa
+
+$$
+Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha (R_{t+1} + \sum_a \pi(a|S_t) Q(S_t, a) - Q(S_t, A_t))
+$$
+
+### Maximization Bias and Double Learning
+
+> One way to view the problem is that it is due to using the same samples (plays) both to determine the maximizing action and to estimate its value.
+
+$$
+Q_1(S_t, A_t) \leftarrow Q_1(S_t, A_t)+ \alpha(R_{t+1} + \gamma Q_2(S_{t+1}, \argmax_a Q_1(S_{t+1}, a)) - Q_1(S_t, A_t) )
+$$
+
+![Double Q-learning](../../figures/RL/rl_chp6_fig4.png)
+
+### The backup diagrams of the above algorithms
+
+![Backup diagrams](../../figures/RL/rl_chp6_fig5.png)
+
 ## Chapter 7 n-step Boostrapping
 
 >In many applications one wants to be able to update the action very fast to take into account anything that has changed, but bootstrapping works best if it is over a length of time in which a significant and recognizable state change has occurred.
@@ -382,7 +460,7 @@ $$
 \eta(s) = \sum_{k=0}^\infty Pr(s_0 \rightarrow s, k, \pi)
 $$
 
-> $Pr(s_0 \rightarrow s, k, \pi)$ is the probability of transitioning from state s to state x in k steps under policy.
+> $Pr(s_0 \rightarrow s, k, \pi)$ is the probability of transitioning from state $s_0$ to state $s$ in $k$ steps under policy.
 
 $$
 \nabla J(\theta) \varpropto  \sum_s \mu(s) \sum_a \nabla \pi(a|s) Q_\pi(s, a)
@@ -395,19 +473,19 @@ $$
 $$
 
 $$
-\nabla J(\theta) = E_{\mu(s)}[\sum_a Q_\pi(S_t, a)\nabla \pi(a|S_t; \theta)]
+\nabla J(\theta) = E_{\mu(s)}[\sum_a Q_\pi(s, a)\nabla \pi(a|s; \theta)]
 $$
 
 $$
-\theta_{t+1} = \theta_t + \alpha \sum_a \hat q(S_t, a; w) \nabla \pi(a|S_t; \theta)
+\theta_{t+1} = \theta_t + \alpha \sum_a  Q(S_t, a) \nabla \pi(a|S_t; \theta)
 $$
 
 > This algorithm, which has been called an **all-actions method** because its update involves all of the actions, is promising and deserving of further study, but our current interest is the classical **REINFORCE algorithm** (Willams, 1992) whose update at time $t$ involves just $A_t$, the one action actually taken at time $t$.
 
 $$
 \begin{array}{ll}
-\nabla J(\theta) &= E_{s \in \mu(s)}\lbrack\sum_a \pi(a|S_t; \theta) Q_\pi(S_t, a) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}\rbrack \\
-&=E_{s \in \mu(s), a \in \pi(a|s)}[Q_\pi(S_t, A_t) \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}] \\
+\nabla J(\theta) &= E_{s \in \mu(s)}\lbrack\sum_a \pi(a|s; \theta) Q_\pi(s, a) \frac{\nabla \pi(a|s; \theta)}{\pi(a|s; \theta)}\rbrack \\
+&=E_{s \in \mu(s), a \in \pi(a|s)}[Q_\pi(s, a) \frac{\nabla \pi(a|s; \theta)}{\pi(a|s; \theta)}] \\
 &= E_{s \in \mu(s), a \in \pi(a|s)}[G_t \frac{\nabla \pi(a|S_t; \theta)}{\pi(a|S_t; \theta)}]
 \end{array}
 $$
