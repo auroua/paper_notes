@@ -218,6 +218,71 @@ In either case, we say the model is used to simulate the environment and produce
 
 > To encourage behavior that tests long-untried actions, a special “bonus reward” is given on simulated experiences involving these actions. In particular, if the modeled reward for a transition is $r$, and the transition has not been tried in $\tau$ time steps, then planning updates are done as if that transition produced a reward of $r+k\sqrt \tau$ , for some small $k$.
 
+### Prioritized Sweeping
+
+> Simulated transitions are started in state–action pairs selected uniformly at random from all previously experienced pairs. But a uniform selection is usually not the best; planning can be much more efficient if simulated transitions and updates are focused on particular state–action pairs.
+
+> If simulated transitions are generated uniformly, then many wasteful updates will be made before stumbling onto one of these useful ones. In the much larger problems that are our real objective, the number of states is so large that an unfocused search would be extremely inefficient.
+
+> Suppose now that the agent discovers a change in the environment and changes its estimated value of one state, either up or down. Typically, this will imply that the values of many other states should also be changed, but the only useful one-step updates are those of actions that lead directly into the one state whose value has been changed. This general idea might be termed *backward focusing of planning computations*.
+
+![Prioritized sweeping](../../figures/RL/rl_chp8_fig11.png)
+
+> We have suggested in this chapter that all kinds of state-space planning can be viewed as **sequences of value updates, varying only in the type of update, expected or sample, large or small, and in the order in which the updates are done.**
+
+> For example, another would be to focus on states according to how easily they can be reached from the states that are visited frequently under the current policy, which might be called forward focusing.
+
+
+### Expected VS Sample Updates
+
+![Expcected and Sample updates](../../figures/RL/rl_chp8_fig12.png)
+
+> In the absence of a distribution model, expected updates are not possible, but sample updates can be done using sample transitions from the environment or a sample model.
+
+Sample Update
+
+$$
+Q(S_t=s, A_t=a) \leftarrow Q(S_t=s, A_t=a) + \alpha (R_{t+1} + \gamma Q(S_{t+1}=s', A_{t+1}=a') - Q(S_t=s, A_t=a)) 
+$$
+
+Expected Update
+
+$$
+Q(S_t=s, A_t=a) = \sum_{s', r} p(S_{t+1}=s', R_{t+1}=r | S_t=s, A_t=a)(r+\gamma \sum_{a'}\pi(A_{t+1}=a'|S_{t+1}=s')Q(S_{t+1}=s', A_{t+1}=a'))
+$$
+
+> **In favor of the expected update is that it is an exact computation, resulting in a new $Q(s, a)$ whose correctness is limited only by the correctness of the $Q(s', a')$ at successor states. The sample update is in addition affected by sampling error. On the other hand, the sample update is cheaper computationally because it considers only one next state, not all possible next states.**
+
+> For a particular starting pair, $s$, $a$,let $b$ be the **branching factor** (i.e., the number of possible next states, $s'$, for which $ \hat p(s' |s, a) > 0)$. Then an expected update of this pair requires roughly $b$ times as much computation as a sample update.
+
+> **If there is enough time to complete an expected update, then the resulting estimate is generally better than that of b sample updates because of the absence of sampling error. But if there is insuffcient time to complete an expected update, then sample updates are always preferable because they at least make some improvement in the value estimate with fewer than $b$ updates.**
+
+> In a real problem, the values of the successor states would be estimates that are themselves updated. By causing estimates to be more accurate sooner, sample updates will have a second advantage in that **the values backed up from the successor states will be more accurate**. These results suggest that sample updates are likely to be superior to expected updates on problems with large stochastic branching factors and too many states to be solved exactly.
+
+### Trajectory Sampling
+
+> The classical approach, from dynamic programming, is to perform sweeps through the entire state (or state–action) space, updating each state (or state–action pair) once per sweep.
+
+> This is problematic on large tasks because there may not be time to complete even one sweep. In many tasks the vast majority of the states are irrelevant because they are visited only under very poor policies or with very low probability.
+
+> The second approach is to sample from the state or state–action space according to some distribution.
+
+> More appealing is to distribute updates according to the on-policy distribution, that is, according to the distribution observed when following the current policy.
+
+> **In either case, sample state transitions and rewards are given by the model, and sample actions are given by the current policy. One simulates explicit individual trajectories and performs updates at the state or state–action pairs encountered along the way. We call this way of generating experience and updates trajectory sampling.**
+
+> In the short term, sampling according to the on-policy distribution helps by focusing on states that are near descendants of the start state. If there are many states and a small branching factor, this effect will be large and long-lasting. In the long run, focusing on the on-policy distribution may hurt because the commonly occurring states all already have their correct values. Sampling them is useless, whereas sampling other states may actually perform some useful work. This presumably is why the exhaustive, unfocused approach does better in the long run, at least for small problems.
+
+> They do suggest that sampling according to the on-policy distribution can be a great advantage for large problems, **in particular for problems in which a small subset of the state–action space is visited under the on-policy distribution.**
+
+### Planning at Decision Time
+
+> The one we have considered so far in this chapter, typified by dynamic programming and Dyna, is to use planning to gradually improve a policy or value function **on the basis of simulated experience** obtained from a model (either a sample or a distribution model).
+
+> These two ways of thinking about planning—using simulated experience to gradually improve a policy or value function, or using simulated experience to select an action for the current state.
+
+> **Decision-time planning** is most useful in applications in which fast responses are not required. In chess playing programs, for example, one may be permitted seconds or minutes of computation for each move, and strong programs may plan dozens of moves ahead within this time. On the other hand, if low latency action selection is the priority, then one is generally better off doing planning in the background  (**background planning**) to compute a policy that can then be rapidly applied to each newly encountered state.
+
 ## Chapter 9 On-policy Prediction with Approximation
 
 > Consequently, when a single state is updated, the change generalizes from that state to affect the values of many other states.
@@ -284,6 +349,8 @@ w_{t+1} = w_{t} + \alpha (R_{t+1} + \gamma V_\pi(S_{t+1}; w) - V_\pi(S_{t}; w)) 
 $$
 
 ![Semi-gradient TD(0)](../../figures/RL/rl_chp9_fig2.png)
+
+
 
 ## Chapter 10 On-policy Control with Approximation
 
