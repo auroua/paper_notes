@@ -283,6 +283,64 @@ $$
 
 > **Decision-time planning** is most useful in applications in which fast responses are not required. In chess playing programs, for example, one may be permitted seconds or minutes of computation for each move, and strong programs may plan dozens of moves ahead within this time. On the other hand, if low latency action selection is the priority, then one is generally better off doing planning in the background  (**background planning**) to compute a policy that can then be rapidly applied to each newly encountered state.
 
+### Heuristic Search
+
+> In heuristic search, for each state encountered, a large tree of possible continuations is considered. The approximate value function is applied to the leaf nodes and then backed up toward the current state at the root.
+
+> The backing up stops at the state–action nodes for the current state. Once the backed-up values of these nodes are computed, the best of them is chosen as the current action, and then all backed-up values are discarded.
+
+> To compute the greedy action given a model and a state-value function, we must look ahead from each possible action to each possible next state, take into account the rewards and estimated values, and then pick the best action. Just as in conventional heuristic search, this process computes backed-up values of the possible actions, but does not attempt to save them.
+
+> The point of searching deeper than one step is to obtain better action selections. If one has a perfect model and an imperfect action-value function, then in fact **deeper search** will usually yield better policies. **The deeper the search, the more computation is required, usually resulting in a slower response time.**.
+
+> **Much of the effectiveness of heuristic search is due to its search tree being tightly focused on the states and actions that might immediately follow the current state.**
+
+> **This great focusing of memory and computational resources on the current decision is presumably the reason why heuristic search can be so effective.**
+
+> Any state-space search can be viewed in this way as the piecing together of a large number of individual one-step updates. Thus, the performance improvement observed with deeper searches is not due to the use of multistep updates as such. Instead, **it is due to the focus and concentration of updates on states and actions immediately downstream from the current state.**
+
+![Heuristic Search](../../figures/RL/rl_chp8_fig13.png)
+
+### Rollout Algorithms
+
+> Rollout algorithms are decision-time planning algorithms **based on Monte Carlo control** applied to simulated trajectories that all begin at the current environment state.
+
+> They estimate action values for a given policy by averaging the returns of **many simulated trajectories** that **start with each possible action and then follow the given policy**. When the action-value estimates are considered to be accurate enough, **the action (or one of the actions) having the highest estimated value is executed**, after which the process is carried out anew from the resulting next state.
+
+> The goal of a rollout algorithm is not to estimate a complete optimal action-value function, $q_\star$, or a complete action-value function, $q_\pi$, for a given policy $\pi$. Instead, they produce Monte Carlo estimates of action values only for **each current state** and for a given policy usually called the **rollout policy**. As decision-time planning algorithms, rollout algorithms make immediate use of these action-value estimates, then discard them. The aim of a rollout algorithm is to improve upon the rollout policy; not to find an optimal policy. 
+
+> Intuition suggests that the better the rollout policy and the more accurate the value estimates, the better the policy produced by a rollout algorithm is likely be
+
+> The number of actions that have to be evaluated for each decision, the number of time steps in the simulated trajectories needed to obtain useful sample returns, the time it takes the rollout policy to make decisions, and the number of simulated trajectories needed to obtain good Monte Carlo action-value estimates.
+
+### Monte Carlo Tree Search
+
+> MCTS is a rollout algorithm as described above, but enhanced by the addition of a means for **accumulating value estimates obtained from the Monte Carlo simulations in order to successively direct simulations toward more highly-rewarding trajectories.**
+
+> The core idea of MCTS is to successively **focus multiple simulations starting at the current state by extending the initial portions of trajectories that have received high evaluations from earlier simulations.**
+
+> As in any tabular Monte Carlo method, the value of a state–action pair is estimated as the average of the (simulated) returns from that pair. **Monte Carlo value estimates are maintained only for the subset of state–action pairs that are most likely to be reached in a few steps, which form a tree rooted at the current state.**
+
+> **MCTS incrementally extends the tree by adding nodes representing states that look promising based on the results of the simulated trajectories.** Outside the tree and at the leaf nodes the rollout policy is used for action selections.
+
+![MCTS](../../figures/RL/rl_chp8_fig14.png)
+
+### Chapter Summary
+
+> Another important dimension is the **distribution of updates**, that is, of the **focus of search**. **Prioritized sweeping focuses backward on the predecessors of states whose values have recently changed. On-policy trajectory sampling focuses on states or state–action pairs that the agent is likely to encounter when controlling its environment.**
+
+### Part I Summary
+
+> All of the methods we have explored so far in this book have three key ideas in common: first, **they all seek to estimate value functions**; second, **they all operate by backing up values along actual or possible state trajectories**; and third, **they all follow the general strategy of generalized policy iteration (GPI)**, meaning that **they maintain an approximate value function and an approximate policy, and they continually try to improve each on the basis of the other.**
+
+> We suggest that **value functions, backing up value updates, and GPI** are powerful organizing principles potentially relevant to any model of intelligence, whether artificial or natural.
+
+> The horizontal dimension is whether they are **sample updates** (based on a sample trajectory) or **expected updates** (based on a distribution of possible trajectories). **Expected updates require a distribution model, whereas sample updates need only a sample model, or can be done from actual experience with no model at all (another dimension of variation).** The vertical dimension of Figure 8.11 corresponds to **the depth of updates**, that is, to the degree of bootstrapping.
+
+> At three of the four corners of the space are the three primary methods for estimating values: **dynamic programming**, **TD**, and **Monte Carlo**. Along the left edge of the space are the sample-update methods, ranging from one-step TD updates to full-return Monte Carlo updates. Between these is a spectrum including methods based on n-step updates.
+
+![MCTS](../../figures/RL/rl_chp8_fig15.png)
+
 ## Chapter 9 On-policy Prediction with Approximation
 
 > Consequently, when a single state is updated, the change generalizes from that state to affect the values of many other states.
