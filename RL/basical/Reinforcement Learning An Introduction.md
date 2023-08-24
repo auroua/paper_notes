@@ -23,7 +23,7 @@ $$
 
 ![Tabular TD(0)](../../figures/RL/rl_chp6_fig1.png)
 
-> The target for the Monte Carlo update is $G_t$, whereas the target for the TD update is $R_{t+1} + \gamma V(S_{t+1})$. This TD method is called TD(0), or one-step TD, because it is a special case of the TD($\lambda$) and n-step TD methods developed in Chapter 12 and Chapter 7.
+> **The target for the Monte Carlo update is $G_t$, whereas the target for the TD update is $R_{t+1} + \gamma V(S_{t+1})$.** This TD method is called TD(0), or one-step TD, because it is a special case of the TD($\lambda$) and n-step TD methods developed in Chapter 12 and Chapter 7.
 
 $$
 \begin{array}{lll}
@@ -33,7 +33,7 @@ v_\pi(s) &= E_\pi[G_t|S_t=s]   \cdots \cdots \cdots \cdots \cdots \cdots \cdots 
 \end{array}
 $$
 
-> Roughly speaking, Monte Carlo methods use an estimate of (6.3) as a target, whereas DP methods use an estimate of (6.4) as a target. The Monte Carlo target is an estimate because the expected value in (6.3) is not known; a sample return is used in place of the real expected return. The DP target is an estimate not because of the expected values, which are assumed to be completely provided by a model of the environment, but because $V_\pi(S_{t+1})$ is not known and the current estimate, $V_\pi(S_{t+1})$, is used instead. The TD target is an estimate for both reasons: it samples the expected values in (6.4) and it uses the current estimate $V$ instead of the true $v_\pi$. Thus, TD methods combine the sampling of Monte Carlo with the bootstrapping of DP.
+> Roughly speaking, **Monte Carlo methods use an estimate of (6.3) as a target, whereas DP methods use an estimate of (6.4) as a target. The Monte Carlo target is an estimate because the expected value in (6.3) is not known; a sample return is used in place of the real expected return. The DP target is an estimate not because of the expected values, which are assumed to be completely provided by a model of the environment, but because $V_\pi(S_{t+1})$ is not known and the current estimate, $V_\pi(S_{t+1})$, is used instead. The TD target is an estimate for both reasons: it samples the expected values in (6.4) and it uses the current estimate $V$ instead of the true $v_\pi$. Thus, TD methods combine the sampling of Monte Carlo with the bootstrapping of DP.**
 
 > *Sample updates* differ from the *expected updates* of DP methods in that they are based on a single sample successor rather than on a complete distribution of all possible successors.
 
@@ -43,7 +43,7 @@ $$
 
 > The other reasonable answer is simply to observe that we have seen $A$ once and the return that followed it was 0; we therefore estimate $V(A)$ as 0. This is the answer that batch Monte Carlo methods give. Notice that it is also the answer that gives minimum squared error on the training data. We expect that the first answer will produce lower error on future data, even though the Monte Carlo answer is better on the existing data.
 
-> Batch Monte Carlo methods always find the estimates that minimize mean-squared error on the training set, whereas batch TD(0) always finds the estimates that would be exactly correct for the maximum-likelihood model of the Markov process.
+> **Batch Monte Carlo methods always find the estimates that minimize mean-squared error on the training set, whereas batch TD(0) always finds the estimates that would be exactly correct for the maximum-likelihood model of the Markov process.**
 
 ### SARSA: On-policy TD Control
 
@@ -309,7 +309,7 @@ $$
 
 > The goal of a rollout algorithm is not to estimate a complete optimal action-value function, $q_\star$, or a complete action-value function, $q_\pi$, for a given policy $\pi$. Instead, they produce Monte Carlo estimates of action values only for **each current state** and for a given policy usually called the **rollout policy**. As decision-time planning algorithms, rollout algorithms make immediate use of these action-value estimates, then discard them. The aim of a rollout algorithm is to improve upon the rollout policy; not to find an optimal policy. 
 
-> Intuition suggests that the better the rollout policy and the more accurate the value estimates, the better the policy produced by a rollout algorithm is likely be
+> Intuition suggests that the better the rollout policy and the more accurate the value estimates, the better the policy produced by a rollout algorithm is likely be.
 
 > The number of actions that have to be evaluated for each decision, the number of time steps in the simulated trajectories needed to obtain useful sample returns, the time it takes the rollout policy to make decisions, and the number of simulated trajectories needed to obtain good Monte Carlo action-value estimates.
 
