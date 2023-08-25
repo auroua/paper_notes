@@ -83,6 +83,9 @@ $$
 
 > In practice, every-visit methods are often preferred because they remove the need to keep track of which states have been visited and because they are much easier to extend to approximations.
 
+### Summary of Chapter
+
+> First, **they can be used to learn optimal behavior directly from interaction with the environment, with no model of the environment’s dynamics.** Second, **they can be used with simulation or sample models.** For surprisingly many applications it is easy to simulate sample episodes even though it is difficult to construct the kind of explicit model of transition probabilities required by DP methods. Third, **it is easy and efficient to focus Monte Carlo methods on a small subset of the states.** A region of special interest can be accurately evaluated without going to the expense of accurately evaluating the rest of the state set. A fourth advantage of Monte Carlo methods, which we discuss later in the book, is that **they may be less harmed by violations of the Markov property.** This is because they do not update their value estimates on the basis of the value estimates of successor states. In other words, it is because they do not bootstrap.
 
 
 ## Chapter 6 Temporal-Difference Learning
