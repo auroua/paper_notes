@@ -4,6 +4,87 @@
 
 ## Chapter 5 Monte Carlo Methods
 
+> Monte Carlo methods require only **experience**—sample sequences of states, actions, and rewards from **actual or simulated interaction** with an environment.
+
+### Monte Carlo Prediction
+
+> An obvious way to estimate it from experience, then, is simply to average the returns observed after visits to that state. As more returns are observed, the average should converge to the expected value. This idea underlies all Monte Carlo methods.
+
+> The first-visit MC method estimates $v_\pi(s)$ as the average of the returns following first visits to $s$, whereas the every-visit MC method averages the returns following all visits to $s$.
+
+![first visit mc prediction](../../figures/RL/rl_chp5_fig1.png)
+
+> In particular, note that the computational expense of **estimating the value of a single state is independent of the number of states.** This can make Monte Carlo methods particularly attractive when one requires the value of only one or a subset of states. **One can generate many sample episodes starting from the states of interest, averaging returns from only these states, ignoring all others.** This is a third advantage Monte Carlo methods can have over DP methods.
+
+### Monte Carlo Estimation of Action Values
+
+> With a model, state values alone are sufficient to determine a policy; one simply looks ahead one step and chooses whichever action leads to the best combination of reward and next state.
+
+> To compare alternatives we need to estimate the value of all the actions from each state, not just the one we currently favor. This is the general problem of **maintaining exploration.** One way to do this is by specifying that **the episodes start in a state–action pair, and that every pair has a nonzero probability of being selected as the start.** We call this the assumption of **exploring starts.**
+
+> The most common alternative approach to assuring that all state–action pairs are encountered is to consider only policies that are stochastic with a nonzero probability of selecting all actions in each state.
+
+
+### Monte Carlo Control
+
+> The observed returns are used for policy evaluation, and then the policy is improved at all the states visited in the episode.
+
+![mces](../../figures/RL/rl_chp5_fig2.png)
+
+
+### Monte Carlo Control without Exploring Starts
+
+> There are two approaches to ensuring this, resulting in what we call **on-policy methods** and **offpolicy methods**. **On-policy methods attempt to evaluate or improve the policy that is used to make decisions, whereas offpolicy methods evaluate or improve a policy different from that used to generate the data.**
+
+> In on-policy control methods the policy is generally **soft**, meaning that $\pi(a|s)>0$ for all $s\in S$ and all $a \in A(s)$, but gradually shifted closer and closer to a deterministic optimal policy.
+
+> The $\epsilon$-greedy policies are examples of $\epsilon$-soft policies, defined as policies for which $\pi(a|s) \geq \frac{\epsilon}{|A(s)|}$ for all states and actions, for some $\epsilon > 0$.
+
+![on-policy first-visit mc control](../../figures/RL/rl_chp5_fig3.png)
+
+### Off-policy Prediction via Importance Sampling
+
+> A more straightforward approach is to use two policies, one that is learned about and that becomes the optimal policy, and one that is more exploratory and is used to generate behavior. The policy being learned about is called the **target policy**, and the policy used to generate behavior is called the **behavior policy.** In this case we say that learning is from data “off” the target policy, and the overall process is termed **off-policy learning**.
+
+> In order to use episodes from $b$ to estimate values for $\pi$, we require that every action taken under $\pi$ is also taken, at least occasionally, under $b$. That is, we require that $\pi(a|s)>0$ implies $b(a|s)>0$. This is called the assumption of **coverage**. It follows from coverage that $b$ must be stochastic in states where it is not identical to $\pi$.
+ 
+> Given a starting state $S_t$, the probability of the subsequent state–action trajectory, $A_t, S_{t+1}, A_{t+1}, \cdots, S_T$ , occurring under any policy $\pi$ is
+
+$$
+Pr\{A_t, S_{t+1}, A_{t+1}, \cdots, S_T | S_t, A_{t:T-1} \sim \pi \}  \\
+     = \pi(A_t|S_t)p(S_{t+1}|S_t, A_t)\pi(A_{t+1}|S_{t+1})\cdots p(S_T|S_{T-1}, A_{T-1}) \\
+     = \prod_{k=t}^{T-1} \pi(A_k | S_k) p(S_{k+1}|S_k, A_k)
+$$
+
+$$
+\begin{array}{lll}
+\rho_{t:T-1} &= \frac{\prod_{k=t}^{T-1}\pi(A_k | S_k) p(S_{k+1}|S_k, A_k)}{\prod_{k=t}^{T-1}b(A_k | S_k) p(S_{k+1}|S_k, A_k)} \\
+&= \prod_{k=t}^{T-1} \frac{\pi(A_k|S_k)}{b(A_k|S_k)}
+\end{array}
+$$
+
+$$
+E[\rho_{t:T-1}G_t|S_t=s] = v_\pi(s)
+$$
+
+**ordinary importance sampling, no biases and high variances.**
+
+$$
+V(s) = \frac{\sum_{t\in J(s)}\rho_{t:T(t)-1}G_t}{|J(s)|}
+$$
+
+**weighted importance sampling, biases and low variances.**
+
+$$
+V(s) = \frac{\sum_{t\in J(s)}\rho_{t:T(t)-1}G_t}{\sum_{t \in J(s)}\rho_{t:T(t)-1}}
+$$
+
+> The variance of ordinary importance sampling is in general unbounded because the variance of the ratios can be unbounded, whereas in the weighted estimator the largest weight on any single return is one.
+
+> In practice, every-visit methods are often preferred because they remove the need to keep track of which states have been visited and because they are much easier to extend to approximations.
+
+
+
 ## Chapter 6 Temporal-Difference Learning
 
 > TD learning is a combination of Monte Carlo ideas and dynamic programming (DP) ideas. Like Monte Carlo methods, TD methods can learn directly from raw experience without a model of the environment’s dynamics. Like DP, TD methods update estimates based in part on other learned estimates, without waiting for a final outcome (they bootstrap).
