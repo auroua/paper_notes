@@ -2,7 +2,124 @@
 
 ## Chapter 4 Dynamic Programming
 
+> The term dynamic programming (DP) refers to a collection of algorithms that can be used to compute optimal policies **given a perfect model of the environment** as a Markov decision process (MDP).
+
+> In fact, all of these methods can be viewed as attempts to **achieve much the same effect as DP**, only with less computation and without assuming a perfect model of the environment.
+
+> we assume that its state, action, and reward sets, $S, A$, and $R$, are finite, and that its dynamics are given by a set of probabilities $p(s', r | s, a)$, for all $s \in S$, $a \in A(s)$, $r \in R$, and $s' \in S^+$ ($S^+$ is $S$ plus a terminal state if the problem is episodic).
+
+> As discussed there, we can easily obtain optimal policies once we have found the optimal value functions, $v_\star$ or $q_\star$, which satisfy the Bellman optimality equations:
+
+$$
+v_\star(s) = \max_a E[R_{t+1} + \gamma v_\star(S_{t+1}) | S_{t+1}, A_t=a] \\
+  = \max_a \sum_{s', r} p(s', r | s, a)(r+\gamma v_\star(s'))
+$$
+
+$$
+q_\star(s, a) = E[R_{t+1} + \gamma \max_{a'}q_\star(S_{t+1}, a') | S_t=s, A_t=a] \\
+     = \sum_{s', r} p(s', r | s, a)(r+\max_{a'}q_\star(s', a'))
+$$
+
+### Policy Evaluation (Prediction)
+
+> First we consider how to compute the state-value function $v_\pi$ for an arbitrary policy $\pi$. This is called policy evaluation in the DP literature. We also refer to it as the prediction problem.
+
+$$
+v_\pi(s) = E_\pi[G_t | S_t=s] \\
+    = E_\pi[R_{t+1}+\gamma G_{t+1} | S_t = s] \\
+    = E_\pi[R_{t+1} + \gamma v_\pi(s_{t+1}) | S_t = s] \\
+    = \sum_a \pi(a|s) \sum_{s', r} p(s', r|s, a) [r + \gamma v_\pi(s')] 
+$$
+
+> The initial approximation, $v_0$, is chosen arbitrarily (except that the terminal state, if any, must be given value 0), and each successive approximation is obtained by using the Bellman equation for $v_\pi$
+
+$$
+v_{k+1}(s) = E_\pi[R_{t+1} + \gamma v_k(S_{t+1} | S_t)] \\ 
+     = \sum_a \pi(a|s) \sum_{s', r} p(s', r|s, a)(r+\gamma v_k(s'))
+$$
+
+> Indeed, the sequence ${v_k}$ can be shown in general to converge to $v_\pi$ as $k \rightarrow \infty $ under the same conditions that guarantee the existence of $v_\pi$. This algorithm is called **iterative policy evaluation**.
+
+> All the updates done in DP algorithms are called **expected updates** because they are based on an expectation over all possible next states rather than on a sample next state.
+
+![iterative policy evaluation](../../figures/RL/rl_chp4_fig1.png)
+
+### Policy Improvement
+
+> The key criterion is whether this is greater than or less than $v_\pi(s)$. If it is greater—that is, if it is better to select a once in $s$ and thereafter follow $\pi$ than it would be to follow $\pi$ all the time—then one would expect it to be better still to select a every time s is encountered, and that the new policy would in fact be a better one overall.
+
+> That this is true is a special case of a general result called the **policy improvement theorem**.
+
+> Let $\pi$ and $\pi'$ be any pair of deterministic policies such that, for all $s \in S$,
+
+$$
+q_\pi(s, \pi'(s)) \geq v_\pi(s)
+$$
+
+> Then the policy $\pi'$ must be as good as, or better than, $\pi$. That is, it must obtain greater or equal expected return from all states $s \in S$:
+
+$$
+v_{\pi'}(s) \geq v_\pi(s)
+$$
+
+> The process of making a new policy that improves on an original policy, by making it greedy with respect to the value function of the original policy, is called **policy improvement**.
+
+### Policy Iteration
+
+$$
+\pi_0 \rightarrow v_{\pi_0} \rightarrow \pi_1 \rightarrow v_{\pi_1} \rightarrow \pi_2 \rightarrow v_{\pi_2} \rightarrow \cdots \pi_\star \rightarrow v_{\pi_\star}
+$$
+
+![policy iteration](../../figures/RL/rl_chp4_fig2.png)
+
+### value iteration
+
+$$
+v_{k+1}(s) = \max_a E[R_{t+1} + \gamma v_k(S_{t+1}) | S_t = s, A_t = a] \\ 
+    = \max_a p(s', r|s, a) (r + \gamma v_k(s'))
+$$
+
+> Note that value iteration is obtained simply by turning the Bellman optimality equation into an update rule.
+
+![value iteration](../../figures/RL/rl_chp4_fig3.png)
+
+
+### Asynchronous Dynamic Programming
+
+> **Asynchronous DP algorithms** are in-place iterative DP algorithms that are not organized in terms of systematic sweeps of the state set.
+
+> **These algorithms update the values of states in any order whatsoever, using whatever values of other states happen to be available. The values of some states may be updated several times before the values of others are updated once.**
+
+> For example, one version of asynchronous value iteration updates the value, in place, of only one state, $s_k$, on each step, $k$, using the value iteration update.
+
+> It just means that an algorithm does not need to **get locked into any hopelessly long sweep before it can make progress improving a policy**. We can try to take advantage of this flexibility by **selecting the states to which we apply updates so as to improve the algorithm’s rate of progress**. We can try to **order the updates to let value information propagate from state to state in an efficient way**. Some states may not need their values updated as often as others. We might even **try to skip updating some states entirely if they are not relevant to optimal behavior**.
+
+> We can apply updates to states as the agent visits them. **This makes it possible to focus the DP algorithm’s updates onto parts of the state set that are most relevant to the agent**. Ref: Trajectory Sampling
+
+### Generalized Policy Iteration
+
+> Policy iteration consists of two simultaneous, interacting processes, **one making the value function consistent with the current policy (policy evaluation)**, and the other **making the policy greedy with respect to the current value function (policy improvement).
+
+> We use the term generalized policy iteration (GPI) to refer to the general idea of letting policy-evaluation and policy-improvement processes interact, independent of the granularity and other details of the two processes. Almost all reinforcement learning methods are well described as GPI. That is, all have identifiable policies and value functions, with the **policy always being improved with respect to the value function** and **the value function always being driven toward the value function for the policy**.
+
+![GPI](../../figures/RL/rl_chp4_fig4.png)
+
+> The value function stabilizes only when it is consistent with the current policy, and the policy stabilizes only when it is greedy with respect to the current value function.
+
+> The evaluation and improvement processes in GPI can be viewed as both **competing and cooperating**. They compete in the sense that they pull in opposing directions. **Making the policy greedy with respect to the value function typically makes the value function incorrect for the changed policy**, and **making the value function consistent with the policy typically causes that policy no longer to be greedy**.
+
+> Each process drives the value function or policy toward one of the lines representing a solution to one of the two goals. The goals interact because the two lines are not orthogonal. Driving directly toward one goal causes some movement away from the other goal.
+
+![GPI](../../figures/RL/rl_chp4_fig5.png)
+
+### Summary of Chapter
+
+> GPI is the general idea of two interacting processes revolving around an approximate policy and an approximate value function. One process takes the policy as given and performs some form of policy evaluation, changing the value function to be more like the true value function for the policy. The other process takes the value function as given and performs some form of policy improvement, changing the policy to make it better, assuming that the value function is its value function.
+
+> All of them update estimates of the values of states based on estimates of the values of successor states. That is, they update estimates on the basis of other estimates. We call this general idea **bootstrapping**.
+
 ## Chapter 5 Monte Carlo Methods
+
 
 > Monte Carlo methods require only **experience**—sample sequences of states, actions, and rewards from **actual or simulated interaction** with an environment.
 
