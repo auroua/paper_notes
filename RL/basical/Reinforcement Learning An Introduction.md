@@ -1,5 +1,101 @@
 # Reinforcement Learning: An Introduction
 
+## Chpater 1 Introduction
+
+> When an infant plays, waves its arms, or looks about, it has no explicit teacher, but it does have a direct sensorimotor connection to its environment. **Exercising this connection produces a wealth of information about cause and effect, about the consequences of actions, and about what to do in order to achieve goals.**
+
+> **Learning from interaction is a foundational idea underlying nearly all theories of learning and intelligence.**
+
+> Rather than directly theorizing about how people or animals learn, we primarily explore idealized learning situations and evaluate the effectiveness of various learning methods.
+
+> The approach we explore, called reinforcement learning, is much more focused on **goal-directed learning from interaction** than are other approaches to machine learning.
+
+### Reinforcement Learning
+
+> Reinforcement learning is learning what to do—how to map situations to actions—so as to maximize a numerical reward signal. **The learner is not told which actions to take, but instead must discover which actions yield the most reward by trying them.**
+
+> These two characteristics: **trial-and-error search** and **delayed reward**—are the two most important distinguishing features of reinforcement learning.
+
+> But the basic idea is **simply to capture the most important aspects of the real problem facing a learning agent interacting over time with its environment to achieve a goal.**  **A learning agent must be able to sense the state of its environment to some extent and must be able to take actions that affect the state. The agent also must have a goal or goals relating to the state of the environment.**
+
+> **Reinforcement learning is trying to maximize a reward signal instead of trying to find hidden structure**. Uncovering structure in an agent’s experience can certainly be useful in reinforcement learning, but by itself does not address the reinforcement learning problem of maximizing a reward signal.
+
+> On a stochastic task, each action must be tried many times to gain a reliable estimate of its expected reward.
+
+### Examples
+
+> All involve **interaction** between an active decision-making agent and its environment, within which the agent seeks to achieve a **goal** despite **uncertainty** about its environment. 
+
+> Correct choice requeires taking into account indirect, delayed consequences of actions, and thus may require foresight or planning.
+
+> The effects of actions cannot be fully predicted; thus the agent must monitor its environment frequently and react appropriately.
+
+> All these examples involve goals that are explicit in the sense that the agent can judge progress toward its goal based on what it can sense directly.
+
+### Elements of Reinforcement Learning
+
+> A **policy**, **a reward signal**, **a value function**, and, optionally, **a model of the environment**.
+
+> A **policy** defines the learning agent’s way of behaving at a given time. Roughly speaking, **a policy is a mapping from perceived states of the environment to actions to be taken when in those states**.
+
+> A **reward signal** defines the goal of a reinforcenment learning problem. On each time step, the environment sends to the reinforcement learning agent a single number called the reward. **The agent’s sole objective is to maximize the total reward it receives over the long run**. The reward signal thus defines what are the good and bad events for the agent.
+
+> The reward signal is the primary basis for altering the policy; if an action selected by the policy is followed by low reward, then the policy may be changed to select some other action in that situation in the future. In general, reward signals may be stochastic functions of the state of the environment and the actions taken.
+
+> Whereas the reward signal indicates what is good in an immediate sense, a value function specifies what is good in the long run. The value of a state is the total amount of reward an agent can expect to accumulate over the future, starting from that state. **Whereas rewards determine the immediate, intrinsic desirability of environmental states, values indicate the long-term desirability of states after taking into account the states that are likely to follow and the rewards available in those states.**
+
+### Limitations and Scope
+
+> **We can think of the state as a signal conveying to the agent some sense of “how the environment is” at a particular time**.
+
+## Chpater 2 Multi-armed Bandits
+
+> Purely evaluative feedback indicates how good the action taken was, but not whether it was the best or the worst action possible. Purely instructive feedback, on the other hand, indicates the correct action to take, independently of the action actually taken.
+
+> Greedy action selection always exploits current knowledge to maximize immediate reward; it spends no time at all sampling apparently inferior actions to see if they might really be better.
+
+
+### Incremental Implementation
+
+$$
+Q_n = \frac{R_1 + R_2 + R_3 + \cdots + R_{n-1}}{n-1}
+$$
+
+$$
+Q_{n+1} = \frac{1}{n} \sum_{i=1}^{n} R_i  \\
+        = \frac{1}{n} (\sum_{i=1}^{n} R_i + R_n) \\
+        = \frac{1}{n} ((n-1)Q_n + R_n) \\ 
+        = \frac{1}{n}(nQ_n - Q_n + R_n ) \\
+        = Q_n + \frac{1}{n}(R_n - Q_n)
+$$
+
+$$
+NewEstimate \leftarrow OldEstimat + StepSize [Target - OldEstimate].
+$$
+
+> The target is presumed to **indicate a desirable direction in which to move, though it may be noisy**.
+
+![bandit algorithm](../../figures/RL/rl_chp2_fig1.png)
+
+$$
+\sum_{n=1}^{\infty} \alpha_n(a) = \infty    \quad   and   \quad  \sum_{n=1}^{\infty} \alpha_n^2(n) < \infty
+$$
+
+> **The first condition is required to guarantee that the steps are large enough to eventually overcome any initial conditions or random fluctuations. The second condition guarantees that eventually the steps become small enough to assure convergence.**
+
+### Upper-Confidence-Bound Action Selection
+
+$$
+A_t = \argmax_a [Q_t(a) + c \sqrt{\frac{lnt}{N_t(a)}}]
+$$
+
+## Chapter 2 Multi-armed Bandits
+
+## Chapter 3 Finite Markov Decision Processes
+
+
+
+
 ## Chapter 4 Dynamic Programming
 
 > The term dynamic programming (DP) refers to a collection of algorithms that can be used to compute optimal policies **given a perfect model of the environment** as a Markov decision process (MDP).
@@ -98,7 +194,7 @@ $$
 
 ### Generalized Policy Iteration
 
-> Policy iteration consists of two simultaneous, interacting processes, **one making the value function consistent with the current policy (policy evaluation)**, and the other **making the policy greedy with respect to the current value function (policy improvement).
+> Policy iteration consists of two simultaneous, interacting processes, **one making the value function consistent with the current policy (policy evaluation)**, and the other **making the policy greedy with respect to the current value function (policy improvement)**.
 
 > We use the term generalized policy iteration (GPI) to refer to the general idea of letting policy-evaluation and policy-improvement processes interact, independent of the granularity and other details of the two processes. Almost all reinforcement learning methods are well described as GPI. That is, all have identifiable policies and value functions, with the **policy always being improved with respect to the value function** and **the value function always being driven toward the value function for the policy**.
 
