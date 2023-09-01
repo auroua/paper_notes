@@ -89,12 +89,116 @@ $$
 A_t = \argmax_a [Q_t(a) + c \sqrt{\frac{lnt}{N_t(a)}}]
 $$
 
-## Chapter 2 Multi-armed Bandits
 
 ## Chapter 3 Finite Markov Decision Processes
 
+> MDPs are meant to be a straightforward **framing of the problem of learning from interaction to achieve a goal**. The learner and decision maker is called the **agent**.The thing it interacts with, comprising everything outside the agent, is called the **environment**.
 
+![agent-environment interaction](../../figures/RL/rl_chp3_fig1.png)
 
+> At each time step $t$, the agent receives some representation of the environment’s **state**, $S_t \in S$, and on that basis selects an **action**, $A_t \in A(S)$. One time step later, in part as a consequence of its action, the agent receives a numerical **reward** , $R_{t+1} \in R $, and finds itself in a new state, $S_{t+1}$.
+
+> The MDP and agent together thereby give rise to a sequence or **trajectory** that begins like this:
+
+$$
+S_0, A_0, R_1, S_1, A_1, R_2, S_2, A_2, R_3, \cdots
+$$
+
+> In a **finite MDP**, the sets of states, actions, and rewards ($S$, $A$, and $R$) all have a finite number of elements. $p$ defines the dynamics of the MDP.
+
+$$
+p(s', r|s, a) = Pr\{S_t=s', R_t=r | S_{t-1}=s, A_{t-1}=a \}
+$$
+
+> In a **Markov** decision process, the probabilities given by $p$ completely characterize the environment’s dynamics.
+
+> **State-transition probabilities**
+
+$$
+p(s'|s, a) = Pr\{S_t=s'|S_{t-1}=s, A_{t-1}=a\} = \sum_{r \in R} p(s', r|s, a)
+$$
+
+> The expected rewards for state-action pairs $r: S \times A \rightarrow R$
+
+$$
+r(s, a) = E[R_t|S_{t-1}=s, A_{t-1}=a] = \sum_{r\in R} r \sum_{s'\in S} p(s', r|s, a)
+$$
+
+> Actions can be any decisions we want to learn how to make, and the states can be anything we can know that might be useful in making them.
+
+> The agent–environment boundary represents the limit of the agent’s **absolute control**, not of its knowledge.
+
+> **One signal to represent the choices made by the agent (the actions), one signal to represent the basis on which the choices are made (the states), and one signal to define the agent’s goal (the rewards)**.
+
+### Goals and Rewards
+
+> **This means maximizing not immediate reward, but cumulative reward in the long run**. We can clearly state this informal idea as the **reward hypothesis**:
+
+> **That all of what we mean by goals and purposes can be well thought of as the maximization of the expected value of the cumulative sum of a received scalar signal (called reward)**.
+
+> In particular, **the reward signal is not the place to impart to the agent prior knowledge about how to achieve what we want it to do**.
+
+> If achieving these sorts of subgoals were rewarded, then the agent might find a way to achieve them without achieving the real goal.
+
+> **The reward signal is your way of communicating to the robot what you want it to achieve, not how you want it achieved**.
+
+### Returns and Episodes
+
+> Expected return
+
+$$
+G_t = R_{t+1} + R_{t+2} + R_{t+3} + \cdots + R_T
+$$
+
+> Each episode ends in a special state called the **terminal state**. Tasks with episodes of this kind are called **episodic tasks**.
+
+> this would be the natural way to formulate an on-going process-control task, or an application to a robot with a long life span. We call these **continuing tasks**
+
+> The agent tries to select actions so that the sum of the discounted rewards it receives over the future is maximized. In particular, it chooses $A_t$ to maximize the **expected discounted return**: $\gamma$ is called **discount rate**.
+
+$$
+G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots = \sum_{k=0}^\infty \gamma^k R_{t+k+1}
+$$
+
+$$
+G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots \\
+    = R_{t+1} + \gamma (R_{t+2} + \gamma R_{t+3} + \cdots) \\ 
+    = R_{t+1} + \gamma G_{t+1}
+$$
+
+### Policy and Value Functions
+
+> The value function of a state $s$ under a policy $\pi$, denoted $v_\pi(s)$, is the expected return when starting in $s$ and following $\pi$ thereafter. We call the function $v_\pi$ the state-value function for policy $\pi$.
+
+$$
+v_\pi(s) = E_\pi[G_t|S_t = s] = E_\pi[\sum_{k=0}^\infty \gamma^k R_{t+k+1} | S_t=s]
+$$
+
+> Similarly, we define the value of taking action $a$ in state $s$ under a policy $\pi$, denoted $q_\pi(s, a)$, as the expected return starting from $s$, taking the action $a$, and thereafter following policy $\pi$. We call $q_\pi$ the **action-value function for policy** $\pi$.
+
+$$
+q_\pi(s, a) = E_\pi[G_t|S_t=s, A_t=a] = E_\pi[\sum_{k=0}^\infty \gamma^k R_{t+k+1} | S_t=s, A_t=a]
+$$
+
+> If an agent follows policy $\pi$ and maintains an average, for each state encountered, of the actual returns that have followed that state, then the average will converge to the state’s value, $v_\pi(s)$, as the number of times that state is encountered approaches infinity. If separate averages are kept for each action taken in each state, then these averages will similarly converge to the action values, $q_\pi(s, a)$. We call estimation methods of this kind Monte Carlo methods because they involve averaging over many random samples of actual returns.
+
+$$
+v_\pi(s) = E_\pi[G_t|S_t=s] \\ 
+         = E_\pi[R_{t+1} + \gamma G_{t+1} | S_t=s] \\ 
+         = \sum_a \pi(a|s) \sum_{s'} \sum_r p(s', r|s, a)[r + \gamma E_\pi[G_{t+1}|S_{t+1}=s']] \\
+         = \sum_a \pi(a|s) \sum_{s'} \sum_r p(s', r|s, a)[r+\gamma v_\pi(s')], \quad for \quad all \quad s \in S
+$$
+
+> It is really a sum over all values of the three variables, $a, s'$ and $r$. For each triple, we compute its probability, $\pi(a|s)p(s_0,r|s, a)$, weight the quantity in brackets by that probability, then sum over all possibilities to get an expected value. The above equation is called **Bellman equation for** $v_\pi$. It expresses a relationship between the value of a state and the values of its successor states. It states that the value of the start state must equal the (discounted) value of the expected next state, plus the reward expected along the way.
+
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r|s, a)(r+\gamma v_\pi(s')) \\ 
+            = \sum_{s', r} p(s', r|s, a)(r+\gamma \sum_{a'} \pi(a'|s')q_\pi(s', a'))
+$$
+
+$$
+v_\pi(s) = \sum_a \pi(a|s) q_\pi(s, a)
+$$
 
 ## Chapter 4 Dynamic Programming
 
