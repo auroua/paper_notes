@@ -200,6 +200,52 @@ $$
 v_\pi(s) = \sum_a \pi(a|s) q_\pi(s, a)
 $$
 
+### Optimal Policies and Optimal Value Functions
+
+> A policy $\pi$ is defined to be better than or equal to a policy $\pi'$ if its expected return is greater than or equal to that of $\pi'$ for all states. In other words, $\pi > \pi'$ if and only if $v_\pi(s) > v_{\pi'}(s)$ for all $s \in S$. This is an **optimal policy**. They share the same state-value function, called the **optimal state-value function**, denoted $v_\star$, and defined as 
+
+$$
+v_\star(s) = \max_\pi v_\pi(s)
+$$
+
+$$
+q_\star(s) = \max_\pi q_\pi(s, a)
+$$
+
+$$
+v_\star(s) = \max_{a\in A(s)} q_{\pi_\star}(s, a)  \\
+          = \max_a \sum_{s', r} p(s', r| s, a)(r + \gamma v_\star(s'))
+$$
+
+$$
+q_\star(s, a) = \sum_{(s', r)} p(s', r|s, a)(r + \gamma v_\star(s'))  \\ 
+            = \sum_{(s', r)} p(s', r | s, a)(r + \gamma \max_{a'} q_\star(s', a'))
+$$
+
+> This solution relies on at least three assumptions that are rarely true in practice: (1) we accurately know the dynamics of the environment; (2) we have enough computational resources to complete the computation of the solution; and (3) the Markov property.
+
+> **Many reinforcement learning methods can be clearly understood as approximately solving the Bellman optimality equation, using actual experienced transitions in place of knowledge of the expected transitions**.
+
+### Optimality and Approximation
+
+> In tasks with small, finite state sets, it is possible to form these approximations using arrays or tables with one entry for each state (or state–action pair). This we call the **tabular case**, and the corresponding methods we call **tabular methods**.
+
+> **The online nature of reinforcement learning makes it possible to approximate optimal policies in ways that put more effort into learning to make good decisions for frequently encountered states, at the expense of less effort for infrequently encountered states. This is one key property that distinguishes reinforcement learning from other approaches to approximately solving MDPs**.
+
+### Summary of Chapter
+
+> Reinforcement learning is about learning from interaction how to behave in order to achieve a goal. The reinforcement learning agent and its environment interact over a sequence of discrete time steps.
+
+> **The actions are the choices made by the agent; the states are the basis for making the choices; and the rewards are the basis for evaluating the choices. Everything inside the agent is completely known and controllable by the agent; everything outside is incompletely controllable but may or may not be completely known. A policy is a stochastic rule by which the agent selects actions as a function of states. The agent’s objective is to maximize the amount of reward it receives over time**.
+
+> A finite Markov decision process (MDP) is an MDP with finite state, action, and (as we formulate it here) reward sets.
+
+> The return is the function of future rewards that the agent seeks to maximize (in expected value).
+
+> A policy’s value functions assign to each state, or state–action pair, **the expected return from that state, or state–action pair, given that the agent uses the policy**. The optimal value functions assign to each state, or state–action pair, the largest expected return achievable by any policy. A policy whose value functions are optimal is an optimal policy.
+
+> In problems of **complete knowledge**, the agent has a complete and accurate model of the environment’s dynamics. In problems of incomplete knowledge, a complete and perfect model of the environment is not available. In most cases of practical interest there are far more states than could possibly be entries in a table, and approximations must be made. In reinforcement learning we are very much concerned with cases in which optimal solutions cannot be found but must be approximated in some way.
+
 ## Chapter 4 Dynamic Programming
 
 > The term dynamic programming (DP) refers to a collection of algorithms that can be used to compute optimal policies **given a perfect model of the environment** as a Markov decision process (MDP).
